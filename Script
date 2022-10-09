@@ -1,0 +1,40 @@
+import string
+
+
+def get_data():
+    print("Welcome to the file decoder")
+    raw_file_dir = input("Write the path of the file you want decoded. Include .txt.")
+    file_dir = raw_file_dir.replace("\"", "")
+    with open(file_dir, "r+") as file:
+        f = file.read()
+    return f
+
+
+def decode(f):
+    index = f.find("0x")
+    if index != -1:
+        before = f[0:index]
+        after = f[index: len(f)]
+        a = len(after)
+        for i in range(2, len(after)-1):
+            if not ((57 >= ord(after[i]) >= 48) | (65 <= ord(after[i]) <= 70) | (97 <= ord(after[i]) <= 122)):
+                a = i
+                break
+            else:
+                if ord(after[i]) == 48 & ord(after[i+1]) == 120:
+                    a = i
+                    break
+        hex_num = after[2:a].upper()  # Remember to get rid of the 0x. Avoid lowercase letters.
+        dec_num = int(hex_num, 16)
+        decoded_f = before + str(dec_num) + after[a:len(after)]
+        decode(decoded_f)
+    else:
+        display(f)
+
+
+def display(f):
+    print("Congrats! Your file has been decoded. The decoded version is:")
+    print(f)
+
+
+decode(get_data())
